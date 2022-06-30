@@ -13,18 +13,43 @@ $app->get('/', function (Request $request, Response $response, $args) {
     return $response;
 });
 
+
 $app->get('/users', function (Request $request, Response $response, $args) {
     
-    $users = [
+    $users = getUsers();
+
+    $response->getBody()->write( json_encode($users) );
+    return $response->withHeader('Content-type', 'application/json');
+});
+
+$app->get('/users/{id}', function (Request $request, Response $response, $args) {
+    
+    $users = getUsers();
+
+    if (array_key_exists($args['id'], $users)) {
+
+        $user[$args['id']] = $users[$args['id']];
+        $user = json_encode($user);
+    
+    } else {
+        $user = 'Usuário Inexistente!';
+    }
+
+    $response->getBody()->write($user);
+    return $response->withHeader('Content-type', 'application/json');
+
+    
+});
+
+function getUsers()
+{
+    return [
         '1' => 'João Silva',
         '2' => 'Maria Fernandes',
         '3' => 'Alice Pereira',
         '4' => 'Lucas Ximenes',
         '5' => 'Luis Santos'
     ];
-
-    $response->getBody()->write( json_encode($users) );
-    return $response->withHeader('Content-type', 'application/json');
-});
+}
 
 $app->run();
